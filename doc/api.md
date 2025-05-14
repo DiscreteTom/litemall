@@ -3,42 +3,43 @@
 本项目前后端接口规范和接口文档。
 
 注意：
-> 1. 以下API部分基于nideshop开源项目的API设计；
-> 2. 以下API是参考API，可能不是很合理，欢迎开发者交流。
-> 3. 接口文档处于开发中，如果发现接口描述和接口实际不对应，欢迎PR或者报告。
+
+> 1. 以下 API 部分基于 nideshop 开源项目的 API 设计；
+> 2. 以下 API 是参考 API，可能不是很合理，欢迎开发者交流。
+> 3. 接口文档处于开发中，如果发现接口描述和接口实际不对应，欢迎 PR 或者报告。
 
 ## 1 前后端接口规范
 
 ### 1.1 请求格式
 
-这里没有采用RESTful风格的接口，而是定义具体语义的接口。
+这里没有采用 RESTful 风格的接口，而是定义具体语义的接口。
 目前只使用`GET`和`POST`来表示请求内容和更新内容两种语义。
 
-#### 1.1.1 GET请求
+#### 1.1.1 GET 请求
 
     GET API_URL?params
 
 例如
-    
+
     GET /home/index
 
 或者
-    
+
     GET /goods/list?page=1&limit=10
 
-#### 1.1.2 POST更新
-    
+#### 1.1.2 POST 更新
+
     POST API_URL
     {
         body
     }
 
 例如
-    
+
     POST /cart/clear
 
-或者    
-    
+或者
+
     POST /goods/star
     {
         id: 1
@@ -46,12 +47,12 @@
 
 #### 1.1.3 分页请求参数
 
-当GET请求后端获取数组数据时，需要传递分页参数。
+当 GET 请求后端获取数组数据时，需要传递分页参数。
 
 例如
 
     GET /goods/list?page=1&limit=10&sort=add_time&order=desc
-    
+
 本项目的通用分页请求参数统一传递四个：
 
     page: 请求页码
@@ -59,35 +60,36 @@
     sort: 排序字段
     order: 升序降序
 
-* page, 和通常计算机概念中数组下标从0开始不同，这里的page参数应该从1开始，1即代表第一页数据;
-* limit, 分页大小；
-* sort, 例如"add_time"或者"id";
-* order, 只能是"desc"或者"asc"。
+- page, 和通常计算机概念中数组下标从 0 开始不同，这里的 page 参数应该从 1 开始，1 即代表第一页数据;
+- limit, 分页大小；
+- sort, 例如"add_time"或者"id";
+- order, 只能是"desc"或者"asc"。
 
 此外，这里四个参数是可选的，后端应该设置默认参数，因此即使前端不设置，
 后端也会自动返回合适的对象数组响应数据。
 
 注意:
+
 > 这里的参数是需要后端支持的，在一些场景下，例如数组对象是组装而成，
-> 有可能sort和order不支持。
+> 有可能 sort 和 order 不支持。
 
 讨论：
-> 有些请求后端是所有数据，这里page和limit可能设置是无意义的。但是
-> 仍然建议加上两个参数，例如page=1, limit=1000。
+
+> 有些请求后端是所有数据，这里 page 和 limit 可能设置是无意义的。但是
+> 仍然建议加上两个参数，例如 page=1, limit=1000。
 
 也就是说，请求后端数组数据时，同一传递四个分页参数，可能是比较良好的做法。
 
 ### 1.2 响应格式
 
     Content-Type: application/json;charset=UTF-8
-    
+
     {
         body
     }
-    
 
-而body是存在一定格式的json内容：
-    
+而 body 是存在一定格式的 json 内容：
+
     {
         errno: xxx,
         errmsg: xxx,
@@ -101,9 +103,9 @@
         errmsg: xxx
     }
 
-* errno是错误码，具体语义见1.3节。
-* errmsg是错误信息。
-    
+- errno 是错误码，具体语义见 1.3 节。
+- errmsg 是错误信息。
+
 #### 1.2.2 操作成功
 
     {
@@ -118,7 +120,7 @@
         errmsg: "成功",
         data: {}
     }
-    
+
 #### 1.2.4 数组对象
 
     {
@@ -133,106 +135,104 @@
         }
     }
 
-list是对象数组，total是总的数量。
+list 是对象数组，total 是总的数量。
 
 ### 1.3 错误码
 
 #### 1.3.1 系统通用错误码
 
-系统通用错误码包括4XX和5XX
+系统通用错误码包括 4XX 和 5XX
 
-* 4xx，前端错误，说明前端开发者需要重新了解后端接口使用规范：
-  * 401，参数错误，即前端没有传递后端需要的参数；
-  * 402，参数值错误，即前端传递的参数值不符合后端接收范围。
-  
-* 5xx，后端系统错误，除501外，说明后端开发者应该继续优化代码，尽量避免返回后端系统错误码：
-  * 501，验证失败，即后端要求用户登录；
-  * 502，系统内部错误，即没有合适命名的后端内部错误；
-  * 503，业务不支持，即后端虽然定义了接口，但是还没有实现功能；
-  * 504，更新数据失效，即后端采用了乐观锁更新，而并发更新时存在数据更新失效；
-  * 505，更新数据失败，即后端数据库更新失败（正常情况应该更新成功）。
+- 4xx，前端错误，说明前端开发者需要重新了解后端接口使用规范：
+  - 401，参数错误，即前端没有传递后端需要的参数；
+  - 402，参数值错误，即前端传递的参数值不符合后端接收范围。
+- 5xx，后端系统错误，除 501 外，说明后端开发者应该继续优化代码，尽量避免返回后端系统错误码：
+  - 501，验证失败，即后端要求用户登录；
+  - 502，系统内部错误，即没有合适命名的后端内部错误；
+  - 503，业务不支持，即后端虽然定义了接口，但是还没有实现功能；
+  - 504，更新数据失效，即后端采用了乐观锁更新，而并发更新时存在数据更新失效；
+  - 505，更新数据失败，即后端数据库更新失败（正常情况应该更新成功）。
 
 #### 1.3.2 商场业务错误码
 
-* AUTH_INVALID_ACCOUNT = 700
-* AUTH_CAPTCHA_UNSUPPORT = 701
-* AUTH_CAPTCHA_FREQUENCY = 702
-* AUTH_CAPTCHA_UNMATCH = 703
-* AUTH_NAME_REGISTERED = 704
-* AUTH_MOBILE_REGISTERED = 705
-* AUTH_MOBILE_UNREGISTERED = 706
-* AUTH_INVALID_MOBILE = 707
-* AUTH_OPENID_UNACCESS = 708
-* AUTH_OPENID_BINDED = 709
-* GOODS_UNSHELVE = 710
-* GOODS_NO_STOCK = 711
-* GOODS_UNKNOWN = 712
-* GOODS_INVALID = 713
-* ORDER_UNKNOWN = 720
-* ORDER_INVALID = 721
-* ORDER_CHECKOUT_FAIL = 722
-* ORDER_CANCEL_FAIL = 723
-* ORDER_PAY_FAIL = 724
-* ORDER_INVALID_OPERATION = 725
-* ORDER_COMMENTED = 726
-* ORDER_COMMENT_EXPIRED = 727
-* GROUPON_EXPIRED = 730
-* COUPON_EXCEED_LIMIT = 740
-* COUPON_RECEIVE_FAIL= 741
-* COUPON_CODE_INVALID= 742
-    
+- AUTH_INVALID_ACCOUNT = 700
+- AUTH_CAPTCHA_UNSUPPORT = 701
+- AUTH_CAPTCHA_FREQUENCY = 702
+- AUTH_CAPTCHA_UNMATCH = 703
+- AUTH_NAME_REGISTERED = 704
+- AUTH_MOBILE_REGISTERED = 705
+- AUTH_MOBILE_UNREGISTERED = 706
+- AUTH_INVALID_MOBILE = 707
+- AUTH_OPENID_UNACCESS = 708
+- AUTH_OPENID_BINDED = 709
+- GOODS_UNSHELVE = 710
+- GOODS_NO_STOCK = 711
+- GOODS_UNKNOWN = 712
+- GOODS_INVALID = 713
+- ORDER_UNKNOWN = 720
+- ORDER_INVALID = 721
+- ORDER_CHECKOUT_FAIL = 722
+- ORDER_CANCEL_FAIL = 723
+- ORDER_PAY_FAIL = 724
+- ORDER_INVALID_OPERATION = 725
+- ORDER_COMMENTED = 726
+- ORDER_COMMENT_EXPIRED = 727
+- GROUPON_EXPIRED = 730
+- COUPON_EXCEED_LIMIT = 740
+- COUPON_RECEIVE_FAIL= 741
+- COUPON_CODE_INVALID= 742
+
 #### 1.3.3 管理后台业务错误码
 
-* ADMIN_INVALID_NAME = 601
-* ADMIN_INVALID_PASSWORD = 602
-* ADMIN_NAME_EXIST = 602
-* ADMIN_ALTER_NOT_ALLOWED = 603
-* ADMIN_DELETE_NOT_ALLOWED = 604
-* ADMIN_INVALID_ACCOUNT = 605
-* GOODS_UPDATE_NOT_ALLOWED = 610
-* GOODS_NAME_EXIST = 611
-* ORDER_CONFIRM_NOT_ALLOWED = 620
-* ORDER_REFUND_FAILED = 621
-* ORDER_REPLY_EXIST = 622
-* USER_INVALID_NAME = 630
-* USER_INVALID_PASSWORD = 631
-* USER_INVALID_MOBILE = 632
-* USER_NAME_EXIST = 633
-* USER_MOBILE_EXIST = 634
-* ROLE_NAME_EXIST = 640
-* ROLE_SUPER_SUPERMISSION = 641
-* ROLE_USER_EXIST = 642
+- ADMIN_INVALID_NAME = 601
+- ADMIN_INVALID_PASSWORD = 602
+- ADMIN_NAME_EXIST = 602
+- ADMIN_ALTER_NOT_ALLOWED = 603
+- ADMIN_DELETE_NOT_ALLOWED = 604
+- ADMIN_INVALID_ACCOUNT = 605
+- GOODS_UPDATE_NOT_ALLOWED = 610
+- GOODS_NAME_EXIST = 611
+- ORDER_CONFIRM_NOT_ALLOWED = 620
+- ORDER_REFUND_FAILED = 621
+- ORDER_REPLY_EXIST = 622
+- USER_INVALID_NAME = 630
+- USER_INVALID_PASSWORD = 631
+- USER_INVALID_MOBILE = 632
+- USER_NAME_EXIST = 633
+- USER_MOBILE_EXIST = 634
+- ROLE_NAME_EXIST = 640
+- ROLE_SUPER_SUPERMISSION = 641
+- ROLE_USER_EXIST = 642
 
 ### 1.4 Token
 
-前后端采用token来验证访问权限。
+前后端采用 token 来验证访问权限。
 
 #### 1.4.1 Header&Token
 
-前后端Token交换流程如下：
+前后端 Token 交换流程如下：
 
-1. 前端访问商场登录API或者管理后台登录API;
+1. 前端访问商场登录 API 或者管理后台登录 API;
 
-2. 成功以后，前端会接收后端响应的一个token，保存在本地；
-    
-3. 请求受保护API则，则采用自定义头部携带此token
+2. 成功以后，前端会接收后端响应的一个 token，保存在本地；
+3. 请求受保护 API 则，则采用自定义头部携带此 token
 
-4. 后端检验Token，成功则返回受保护的数据。
+4. 后端检验 Token，成功则返回受保护的数据。
 
-#### 1.4.2 商场自定义Header
+#### 1.4.2 商场自定义 Header
 
-访问受保护商场API采用自定义`X-Litemall-Token`头部
+访问受保护商场 API 采用自定义`X-Litemall-Token`头部
 
-1. 小商城（或轻商场）前端访问小商城后端登录API`/wx/auth/login`
+1.  小商城（或轻商场）前端访问小商城后端登录 API`/wx/auth/login`
 
         POST /wx/auth/login
-    
+
         {
             "username": "user123",
             "password": "user123"
         }
 
-2. 成功以后，前端会接收后端响应的一个token，
+2.  成功以后，前端会接收后端响应的一个 token，
 
         {
           "errno": 0,
@@ -244,27 +244,27 @@ list是对象数组，total是总的数量。
             "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGlzIGlzIGxpdGVtYWxsIHRva2VuIiwiYXVkIjoiTUlOSUFQUCIsImlzcyI6IkxJVEVNQUxMIiwiZXhwIjoxNTU3MzI2ODUwLCJ1c2VySWQiOjEsImlhdCI6MTU1NzMxOTY1MH0.XP0TuhupV_ttQsCr1KTaPZVlTbVzVOcnq_K0kXdbri0"
           },
           "errmsg": "成功"
-        }    
-    
-3. 请求受保护API则，则采用自定义头部携带此token
+        }
 
-        GET http://localhost:8080/wx/address/list
+3.  请求受保护 API 则，则采用自定义头部携带此 token
+
+        GET http://localhost:8081/wx/address/list
         X-Litemall-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGlzIGlzIGxpdGVtYWxsIHRva2VuIiwiYXVkIjoiTUlOSUFQUCIsImlzcyI6IkxJVEVNQUxMIiwiZXhwIjoxNTU3MzM2ODU0LCJ1c2VySWQiOjIsImlhdCI6MTU1NzMyOTY1NH0.JY1-cqOnmi-CVjFohZMqK2iAdAH4O6CKj0Cqd5tMF3M
 
-#### 1.4.3 管理后台自定义Header
+#### 1.4.3 管理后台自定义 Header
 
-访问受保护管理后台API则是自定义`X-Litemall-Admin-Token`头部。
+访问受保护管理后台 API 则是自定义`X-Litemall-Admin-Token`头部。
 
-1. 管理后台前端访问管理后台后端登录API`/admin/auth/login`
+1.  管理后台前端访问管理后台后端登录 API`/admin/auth/login`
 
         POST /admin/auth/login
-    
+
         {
             "username": "admin123",
             "password": "admin123"
         }
 
-2. 成功以后，管理后台前端会接收后端响应的一个token，
+2.  成功以后，管理后台前端会接收后端响应的一个 token，
 
         {
             "errno": 0,
@@ -277,189 +277,195 @@ list是对象数组，total是总的数量。
             },
             "errmsg": "成功"
         }
-    
-3. 请求受保护API时，则采用自定义头部携带此token
 
-        GET http://localhost:8080/wx/address/list
+3.  请求受保护 API 时，则采用自定义头部携带此 token
+
+        GET http://localhost:8081/wx/address/list
         X-Litemall-Admin-Token: f2dbcae8-6e25-4f8e-bc58-aa81d512c952
 
 ### 1.5 版本控制
 
-API应该存在版本控制，以保证兼容性。
+API 应该存在版本控制，以保证兼容性。
 
 由于仍处于开发中，因此目前未引入版本控制。
 
-### 1.6 API格式
+### 1.6 API 格式
 
-这里定义一个API的格式：
+这里定义一个 API 的格式：
 
 应用场景
 
     xxx
-    
+
 接口链接
 
     xxx
-    
+
 请求参数
 
     xxx
-    
+
 响应内容
 
     xxx
-    
+
 错误码
 
     xxx
 
-### 1.7 API预览
+### 1.7 API 预览
 
-接下来会分别从用户层面和管理员层面构建商场API服务和管理后台API服务。
+接下来会分别从用户层面和管理员层面构建商场 API 服务和管理后台 API 服务。
 
-商场API服务涉及
+商场 API 服务涉及
 
-* 安全服务
-* 首页服务
-* 类目服务
-* 商品服务
-* 购物车服务
-* 订单服务
-* 会员服务
-* 收货地址服务
-* 品牌商服务
-* 收藏服务
-* 评论服务
-* 优惠券服务
-* 反馈服务
-* 足迹服务
-* 团购服务
-* 帮助服务
-* 搜索服务
-* 专题服务
-* 对象存储服务
+- 安全服务
+- 首页服务
+- 类目服务
+- 商品服务
+- 购物车服务
+- 订单服务
+- 会员服务
+- 收货地址服务
+- 品牌商服务
+- 收藏服务
+- 评论服务
+- 优惠券服务
+- 反馈服务
+- 足迹服务
+- 团购服务
+- 帮助服务
+- 搜索服务
+- 专题服务
+- 对象存储服务
 
+管理后台 API 服务涉及:
 
-管理后台API服务涉及:
-* 略
+- 略
 
-### 1.8 API测试
+### 1.8 API 测试
 
-本节以GET、POST两种方式以及是否需要登录举例说明如何测试和使用本项目API。
+本节以 GET、POST 两种方式以及是否需要登录举例说明如何测试和使用本项目 API。
 
-开发者可以使用各种API测试命令或者工具，这里以Postman作为工具。
+开发者可以使用各种 API 测试命令或者工具，这里以 Postman 作为工具。
 
 #### 1.8.1 GET 示例
 
-如果一个API是GET方法，那么请求参数需要在访问链接后面：
+如果一个 API 是 GET 方法，那么请求参数需要在访问链接后面：
 
-例如测试2.4.2节商品详情API
+例如测试 2.4.2 节商品详情 API
 
 ![](./pics/admin/get.png)
 
 #### 1.8.2 GET & Token 示例
 
-如果需要登录才能访问数据，则需要先向后端请求登录，得到token，然后请求时携带token。
+如果需要登录才能访问数据，则需要先向后端请求登录，得到 token，然后请求时携带 token。
 
-例如测试2.8.1节收货地址列表API
+例如测试 2.8.1 节收货地址列表 API
 
 如果没有登录，则返回未登录信息
 
 ![](./pics/admin/get_no_token.png)
 
-因此测试这些API，需要先登录
+因此测试这些 API，需要先登录
 
 ![](./pics/admin/login.png)
 
-然后，采用自定义`X-Litemall-Token`来携带token访问商场API
+然后，采用自定义`X-Litemall-Token`来携带 token 访问商场 API
 
 ![](./pics/admin/get_with_token.png)
 
 注意：
-> 访问受保护商场API是采用自定义`X-Litemall-Token`头部；
-> 而访问受保护管理后台API则是自定义`X-Litemall-Admin-Token`头部。
+
+> 访问受保护商场 API 是采用自定义`X-Litemall-Token`头部；
+> 而访问受保护管理后台 API 则是自定义`X-Litemall-Admin-Token`头部。
 
 #### 1.8.3 POST 示例
 
-通常POST请求后端时，都需要先登录才能有权限上传数据，因此这里不举例说明。
+通常 POST 请求后端时，都需要先登录才能有权限上传数据，因此这里不举例说明。
 
 #### 1.8.4 POST & Token 示例
 
-如果需要登录才能提交数据，则需要先向后端请求登录，得到token，然后请求时携带token。
+如果需要登录才能提交数据，则需要先向后端请求登录，得到 token，然后请求时携带 token。
 
 ![](./pics/admin/post_no_token.png)
 
-因此测试这些API，需要先登录
+因此测试这些 API，需要先登录
 
 ![](./pics/admin/login.png)
 
-然后，采用自定义`X-Litemall-Token`来携带token访问商场API
+然后，采用自定义`X-Litemall-Token`来携带 token 访问商场 API
 
 ![](./pics/admin/get_with_token.png)
 
 注意：
-> 访问受保护商场API是采用自定义`X-Litemall-Token`头部；
-> 而访问受保护管理后台API则是自定义`X-Litemall-Admin-Token`头部。
 
-### 1.9 API保护
+> 访问受保护商场 API 是采用自定义`X-Litemall-Token`头部；
+> 而访问受保护管理后台 API 则是自定义`X-Litemall-Admin-Token`头部。
 
-为了保护API不被滥用，通常API需要引入保护机制，例如OAuth2。
+### 1.9 API 保护
 
-本项目暂时无保护机制，因此实际上一旦开发者知道服务器，就很容易访问API。
+为了保护 API 不被滥用，通常 API 需要引入保护机制，例如 OAuth2。
 
-### 1.10 API局限性
+本项目暂时无保护机制，因此实际上一旦开发者知道服务器，就很容易访问 API。
 
-当前API还存在一些问题，后面需要继续优化和完善。
+### 1.10 API 局限性
 
-* 无意义的通用字段
+当前 API 还存在一些问题，后面需要继续优化和完善。
 
-* 团购API完善
+- 无意义的通用字段
+
+- 团购 API 完善
 
 ### 1.11 Not Like Swagger
 
-本项目不是很接受Swagger，基于以下考虑：
+本项目不是很接受 Swagger，基于以下考虑：
 
-* 前后端中立
+- 前后端中立
 
-在前后端分离项目中，依赖后端的Swagger来生成项目API似乎不是很理想，
-这实际上把项目API设计工作过多地压在后端，同时前端也被迫依赖后端，
-因为后端如果没有写好文档注解，前端不可能了解API的输入输出。
+在前后端分离项目中，依赖后端的 Swagger 来生成项目 API 似乎不是很理想，
+这实际上把项目 API 设计工作过多地压在后端，同时前端也被迫依赖后端，
+因为后端如果没有写好文档注解，前端不可能了解 API 的输入输出。
 
 可能一种合理的做法应该这样：
-项目初期前后端一起完成一个完整基本的API文档，定义好交互规范和具体API的行为，然后双方同时开始开发工作；
-某个开发阶段，前端需要更多的数据或者新的API支持，此时也不需要立即联系后端（除非API产生破坏性变更），
-而是暂时基于mock和自定义mock数据独立开发；之后，在合适阶段（可以按照项目规定，例如三天或者周五），
-前后端再次沟通API的变更，后端了解需求后则可以接受、拒绝或者调整，当然变更必须要在API文档中体现和更新；
-下一个开发阶段，前端和后端能够再次基于最新的API文档来调整自己代码。
-最后项目测试时，只要前端对照API文档，后端也是对照API文档。
+项目初期前后端一起完成一个完整基本的 API 文档，定义好交互规范和具体 API 的行为，然后双方同时开始开发工作；
+某个开发阶段，前端需要更多的数据或者新的 API 支持，此时也不需要立即联系后端（除非 API 产生破坏性变更），
+而是暂时基于 mock 和自定义 mock 数据独立开发；之后，在合适阶段（可以按照项目规定，例如三天或者周五），
+前后端再次沟通 API 的变更，后端了解需求后则可以接受、拒绝或者调整，当然变更必须要在 API 文档中体现和更新；
+下一个开发阶段，前端和后端能够再次基于最新的 API 文档来调整自己代码。
+最后项目测试时，只要前端对照 API 文档，后端也是对照 API 文档。
 
-* 后端代码简洁
+- 后端代码简洁
 
-如果使用Swagger，为了得到完整的文档，需要在每一个方法前面加上多个文档注解，文档越是详尽，则注解越多，
-造成代码不是很简洁。特别是具备代码属性的注解和Swagger文档注解混杂在一起，可能不是很好。
+如果使用 Swagger，为了得到完整的文档，需要在每一个方法前面加上多个文档注解，文档越是详尽，则注解越多，
+造成代码不是很简洁。特别是具备代码属性的注解和 Swagger 文档注解混杂在一起，可能不是很好。
 
-当然，本项目也简单地配置了Swagger(见`WxSwagger2Configuration`和`AdminSwagger2Configuration`)，
-* 在线Swagger文档链接：http://122.51.199.160:8080/swagger-ui.html
-* 本地Swagger文档链接：http://localhost:8080/swagger-ui.html
+当然，本项目也简单地配置了 Swagger(见`WxSwagger2Configuration`和`AdminSwagger2Configuration`)，
 
-此外，也使用了swagger-bootstrap-ui对Swagger进一步增强了使用效果。
-* 在线swagger-bootstrap-ui文档链接：http://122.51.199.160:8080/doc.html
-* 本地swagger-bootstrap-ui文档链接：http://localhost:8080/doc.html
+- 在线 Swagger 文档链接：http://122.51.199.160:8081/swagger-ui.html
+- 本地 Swagger 文档链接：http://localhost:8081/swagger-ui.html
 
-当然正如上文讨论，本项目不是很接受Swagger的理念，所以后端没有使用Swagger的相关文档注解，
-这也导致了Swagger接口文档的不具可读性。如果开发者需要，可以自行在后端补充Swagger注解。
+此外，也使用了 swagger-bootstrap-ui 对 Swagger 进一步增强了使用效果。
+
+- 在线 swagger-bootstrap-ui 文档链接：http://122.51.199.160:8081/doc.html
+- 本地 swagger-bootstrap-ui 文档链接：http://localhost:8081/doc.html
+
+当然正如上文讨论，本项目不是很接受 Swagger 的理念，所以后端没有使用 Swagger 的相关文档注解，
+这也导致了 Swagger 接口文档的不具可读性。如果开发者需要，可以自行在后端补充 Swagger 注解。
 
 需要注意的是：
-> 这里接口默认是公开的，因此项目一旦需要上线，请及时删除swagger和swagger-bootstrap-ui依赖和配置，
+
+> 这里接口默认是公开的，因此项目一旦需要上线，请及时删除 swagger 和 swagger-bootstrap-ui 依赖和配置，
 > 或者采取其他手段，防止接口对外暴露造成**安全隐患**。
 
 例如
+
 ```
 swagger:
   production: false
 ```
 
-## 2 商城API服务
+## 2 商城 API 服务
 
 ### 2.1 安全服务
 
@@ -468,40 +474,41 @@ swagger:
 应用场景
 
     小程序环境下微信登录。
-      
+
+
 接口链接
 
     xxx
-    
+
 请求参数
 
     xxx
-    
+
 响应内容
 
     xxx
-    
+
 错误码
 
     xxx
-    
+
 #### 2.1.2 账号登录
 
 应用场景
 
     基于用户名和密码的账号登录
-    
+
 接口链接
 
     POST /wx/auth/login
-    
+
 请求参数
 
     {
         "username": "user123",
         "password": "user123"
-    }    
-    
+    }
+
 响应内容
 
     {
@@ -514,186 +521,186 @@ swagger:
         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGlzIGlzIGxpdGVtYWxsIHRva2VuIiwiYXVkIjoiTUlOSUFQUCIsImlzcyI6IkxJVEVNQUxMIiwiZXhwIjoxNTU3MzI2ODUwLCJ1c2VySWQiOjEsImlhdCI6MTU1NzMxOTY1MH0.XP0TuhupV_ttQsCr1KTaPZVlTbVzVOcnq_K0kXdbri0"
       },
       "errmsg": "成功"
-    }   
-    
+    }
+
 错误码
 
     略
-    
+
 #### 2.1.3 注册
 
 应用场景
 
     xxx
-    
+
 接口链接
 
     xxx
-    
+
 请求参数
 
     xxx
-    
+
 响应内容
 
     xxx
-    
+
 错误码
 
     xxx
-    
+
 #### 2.1.4 退出
 
 应用场景
 
     账号退出
-    
+
 接口链接
 
     POST /wx/auth/logout
-    
+
 请求参数
 
     {
         "username": "user123",
         "password": "user123"
-    }    
-    
+    }
+
 响应内容
 
     {
         "errno": 0,
         "errmsg": "成功"
     }
-    
+
 错误码
 
     略
-    
+
 #### 2.1.5 注册验证码
 
 应用场景
 
     用户未登录情况下，请求后端发送注册验证码用于注册。
-    
+
 接口链接
 
     xxx
-    
+
 请求参数
 
     xxx
-    
+
 响应内容
 
     xxx
-    
+
 错误码
 
     xxx
-    
+
 #### 2.1.6 操作验证码
 
 应用场景
 
     用户已登录情况下，请求后端发送操作验证码用于相关操作。
-    
+
 接口链接
 
     xxx
-    
+
 请求参数
 
     xxx
-    
+
 响应内容
 
     xxx
-    
+
 错误码
 
     xxx
-    
+
 #### 2.1.7 账号密码修改
 
 应用场景
 
     账号密码修改
-    
+
 接口链接
 
     xxx
-    
+
 请求参数
 
     xxx
-    
+
 响应内容
 
     xxx
-    
+
 错误码
 
     xxx
-    
+
 #### 2.1.8 微信手机号码绑定
 
 应用场景
 
     微信手机号码绑定，仅用于小程序环境。
-    
+
 接口链接
 
     xxx
-    
+
 请求参数
 
     xxx
-    
+
 响应内容
 
     xxx
-    
+
 错误码
 
     xxx
-    
+
 #### 2.1.9 手机号码修改
 
 应用场景
 
     手机号码修改
-    
+
 接口链接
 
     xxx
-    
+
 请求参数
 
     xxx
-    
+
 响应内容
 
     xxx
-    
+
 错误码
 
     xxx
-    
+
 #### 2.1.10 账号信息
 
 应用场景
 
     账号信息
-    
+
 接口链接
 
     GET /wx/auth/info
-    
+
 请求参数
 
     无
-    
+
 响应内容
 
     {
@@ -705,22 +712,22 @@ swagger:
             "avatar": "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"
         },
         "errmsg": "成功"
-    }   
-    
+    }
+
 错误码
 
     略
-    
+
 #### 2.1.11 账号信息更新
 
 应用场景
 
     账号信息更新。
-    
+
 接口链接
 
     POST /wx/auth/profile
-    
+
 请求参数
 
     {
@@ -728,18 +735,18 @@ swagger:
         "nickName": "user123",
         "avatar": "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"
     }
-    
+
 响应内容
 
     {
         "errno": 0,
         "errmsg": "成功"
     }
-    
+
 错误码
 
     略
-    
+
 ### 2.2 首页服务
 
 #### 2.2.1 首页数据
@@ -747,15 +754,15 @@ swagger:
 应用场景
 
     首页数据
-    
+
 接口链接
 
     GET /wx/home/index
-    
+
 请求参数
 
     无
-    
+
 响应内容
 
     {
@@ -1262,7 +1269,8 @@ swagger:
 错误码
 
     无
-        
+
+
 ### 2.3 类目服务
 
 ### 2.4 商品服务
@@ -1272,13 +1280,13 @@ swagger:
 应用场景
 
     商品列表
-    
+
 接口链接
 
     GET /wx/goods/list
 
 请求参数
-    
+
     isNew: 是否新品，true或者false
     isHot: 是否热卖商品，true或者false
     keyword: 关键字，如果设置则查询是否匹配关键字
@@ -1288,7 +1296,8 @@ swagger:
     limit: 每一页数量
     sort: 排序字段
     order: 升序降序
-        
+
+
 响应内容
 
     {
@@ -1425,22 +1434,21 @@ swagger:
     }
 
 错误码
-    
-    略   
-    
+
+    略
 
 #### 2.4.2 商品详情
 
 应用场景
 
     商品详情
-    
+
 接口链接
 
     GET /wx/goods/detail
 
 请求参数
-    
+
     id: 商品ID，例如id=1152008
 
 响应内容
@@ -1557,28 +1565,28 @@ swagger:
     }
 
 错误码
-    
-    略   
 
+    略
 
 #### 2.4.3 商品推荐
 
 应用场景
 
     针对某个商品推荐其他商品
-    
+
 接口链接
 
     GET /wx/goods/related
 
 请求参数
-    
+
     id: 商品ID，例如id=1152008
     page: 请求页码
     limit: 每一页数量
     sort: 排序字段
     order: 升序降序
-        
+
+
 响应内容
 
     {
@@ -1655,22 +1663,22 @@ swagger:
     }
 
 错误码
-    
-    略   
-            
+
+    略
+
+
 #### 2.4.4 商品分类
 
 应用场景
 
     针对某个商品推荐其他商品
-    
+
 接口链接
 
     GET /wx/goods/related
 
 请求参数
-    
-        
+
 响应内容
 
 错误码
@@ -1680,15 +1688,16 @@ swagger:
 应用场景
 
     在售商品总数
-    
+
 接口链接
 
     GET /wx/goods/count
 
 请求参数
-    
+
     无
-        
+
+
 响应内容
 
     {
@@ -1696,11 +1705,12 @@ swagger:
       "data": 238,
       "errmsg": "成功"
     }
-    
+
 错误码
-       
+
     无
-         
+
+
 ### 2.5 购物车服务
 
 #### 2.5.1 用户购物车
@@ -1708,23 +1718,22 @@ swagger:
 应用场景
 
     用户购物车
-    
+
 接口链接
 
-
 请求参数
-    
+
     无
-        
+
+
 响应内容
 
-    
 错误码
-       
+
     略
-    
+
 ### 2.6 订单服务
-    
+
 #### 2.6.1 订单列表
 
 应用场景
@@ -1734,7 +1743,7 @@ swagger:
 接口链接
 
     GET /wx/order/list
-    
+
 请求参数
 
     showType: 订单类型，0则全部，1则待付款，2则待发货，3则待收货，4则代评价
@@ -1742,7 +1751,7 @@ swagger:
     limit: 每一页数量
     sort: 排序字段
     order: 升序降序
-    
+
 响应结果
 
     {
@@ -1784,11 +1793,11 @@ swagger:
       },
       "errmsg": "成功"
     }
-    
+
 错误码
 
     略
-    
+
 #### 2.6.2 订单详情
 
 应用场景
@@ -1798,11 +1807,11 @@ swagger:
 接口链接
 
     GET /wx/order/detail
-    
+
 请求参数
-    
+
     orderId： 订单ID
-    
+
 响应结果
 
     {
@@ -1853,11 +1862,11 @@ swagger:
       },
       "errmsg": "成功"
     }
-    
+
 错误码
 
     略
-    
+
 #### 2.6.3 创建订单
 
 应用场景
@@ -1878,7 +1887,7 @@ swagger:
       "grouponRulesId": 0,
       "grouponLinkId": 0
     }
-    
+
 响应结果
 
     {
@@ -1888,11 +1897,11 @@ swagger:
       },
       "errmsg": "成功"
     }
-    
+
 错误码
 
     略
-    
+
 #### 2.6.4 取消订单
 
 应用场景
@@ -1902,18 +1911,18 @@ swagger:
 接口链接
 
     POST /wx/order/cancel
-    
+
 请求参数
 
     orderId: 订单ID
-    
+
 响应结果
 
     {
       "errno": 0,
       "errmsg": "成功"
     }
-    
+
 错误码
 
     略
@@ -1954,7 +1963,8 @@ swagger:
 错误码
 
     略
-     
+
+
 #### 2.6.6 确认收货
 
 应用场景
@@ -1964,22 +1974,22 @@ swagger:
 接口链接
 
     POST /wx/order/confirm
-    
+
 请求参数
 
     orderId: 订单ID
-    
+
 响应结果
 
     {
       "errno": 0,
       "errmsg": "成功"
     }
-    
+
 错误码
 
     略
-    
+
 #### 2.6.7 订单删除
 
 应用场景
@@ -1989,22 +1999,22 @@ swagger:
 接口链接
 
     POST /wx/order/delete
-    
+
 请求参数
 
     orderId: 订单ID
-    
+
 响应结果
 
     {
       "errno": 0,
       "errmsg": "成功"
     }
-    
+
 错误码
 
     略
-    
+
 #### 2.6.8 订单退款
 
 应用场景
@@ -2015,42 +2025,42 @@ swagger:
 
     退款请求发送以后，不会自动退款，仅仅是后端设置退款请求记录。
     管理员在管理后台看到退款请求以后会手动退款或者拒绝退款。
-    
+
 接口链接
 
     POST /wx/order/refund
-    
+
 请求参数
 
     orderId: 订单ID
-    
+
 响应结果
 
     {
       "errno": 0,
       "errmsg": "成功"
     }
-    
+
 错误码
 
     略
-           
-  
+
+
 #### 2.6.9 待评价商品
 
 应用场景
 
-    用户确认收货以后，可以待评价的订单商品。    
+    用户确认收货以后，可以待评价的订单商品。
 
 接口链接
 
     GET /wx/order/goods
-    
+
 请求参数
 
     orderId: 订单ID
     goodsId: 商品ID
-    
+
 响应结果
 
     {
@@ -2075,12 +2085,12 @@ swagger:
       },
       "errmsg": "成功"
     }
-    
+
 错误码
 
     略
-         
-  
+
+
 #### 2.6.10 订单评价
 
 应用场景
@@ -2090,7 +2100,7 @@ swagger:
 接口链接
 
     POST /wx/order/comment
-    
+
 请求参数
 
     orderGoodsId: 订单商品ID
@@ -2098,7 +2108,7 @@ swagger:
     star: 评分，1分至5分
     hasPicture: 是否有评价图片
     picUrls: 评价图片列表
-    
+
 例如
 
     {
@@ -2108,18 +2118,20 @@ swagger:
       "hasPicture": true,
       "picUrls": []
     }
-        
+
+
 响应结果
 
     {
       "errno": 0,
       "errmsg": "成功"
     }
-    
+
 错误码
 
     略
-                                                  
+
+
 ### 2.7 会员服务
 
 ### 2.8 收货地址服务
@@ -2140,7 +2152,8 @@ swagger:
     limit: 每一页数量
     sort: 排序字段
     order: 升序降序
-        
+
+
 响应结果
 
     {
@@ -2174,7 +2187,7 @@ swagger:
 错误码
 
     略
-    
+
 #### 2.8.2 收货地址详情
 
 应用场景
@@ -2188,7 +2201,7 @@ swagger:
 请求参数
 
     id: 收货地址ID
-    
+
 响应结果
 
     {
@@ -2212,7 +2225,6 @@ swagger:
 
     略
 
-    
 #### 2.8.3 保存收货地址
 
 应用场景
@@ -2234,10 +2246,10 @@ swagger:
     addressDetail: 具体地址,
     areaCode: 地址编码，
     postalCode: 邮政编码
-    isDefault: 是否默认    
+    isDefault: 是否默认
 
 例如
-    
+
     {
       "id": 0,
       "name": "xxx",
@@ -2249,7 +2261,7 @@ swagger:
       "addressDetail": "dddd",
       "isDefault": true
     }
-    
+
 响应结果
 
     {
@@ -2261,8 +2273,7 @@ swagger:
 错误码
 
     略
-    
-    
+
 #### 2.8.4 删除收货地址
 
 应用场景
@@ -2276,7 +2287,7 @@ swagger:
 请求参数
 
     id: 收货地址ID
-    
+
 响应结果
 
     {
@@ -2287,7 +2298,8 @@ swagger:
 错误码
 
     略
-            	
+
+
 ### 2.9 品牌商服务
 
 #### 2.9.1 品牌商列表
@@ -2295,18 +2307,18 @@ swagger:
 应用场景
 
     访问品牌商列表信息
-    
+
 接口链接
 
     GET /wx/brand/list
 
 请求参数
-    
+
     page: 请求页码
     limit: 每一页数量
     sort: 排序字段
     order: 升序降序
-    
+
 响应内容
 
     {
@@ -2393,23 +2405,23 @@ swagger:
     }
 
 错误码
-    
+
     略
-    
+
 #### 2.9.2 品牌商详情
 
 应用场景
 
     访问单个品牌商详情信息
-    
+
 接口链接
 
     GET /wx/brand/detail
 
 请求参数
-    
+
     id: 品牌商ID，例如1001020
-    
+
 响应内容
 
     {
@@ -2426,12 +2438,12 @@ swagger:
         "deleted": false
       },
       "errmsg": "成功"
-    }    
+    }
 
 错误码
-    
+
     略
-    
+
 ### 2.10 收藏服务
 
 #### 2.10.1 收藏列表
@@ -2439,19 +2451,19 @@ swagger:
 应用场景
 
     收藏列表
-    
+
 接口链接
 
     GET /wx/collect/list
-    
+
 请求参数
-    
+
     type： 收藏类型，如果是0则是商品收藏，如果是1则是专题收藏
     page: 请求页码
     limit: 每一页数量
     sort: 排序字段
-    order: 升序降序   
-    
+    order: 升序降序
+
 响应内容
 
     {
@@ -2484,11 +2496,10 @@ swagger:
       },
       "errmsg": "成功"
     }
-    
+
 错误码
-    
+
     略
-    
 
 #### 2.10.2 收藏添加或删除
 
@@ -2500,31 +2511,31 @@ swagger:
 
     如果用户已经收藏，则请求API会删除已收藏商品或专题；
     如果用户未收藏，则请求API会添加新的商品或专题收藏记录。
-        
+
+
 接口链接
 
     POST /wx/collect/addordelete
-    
+
 请求参数
-    
+
     type: 收藏类型，如果是0则是商品收藏，如果是1则是专题收藏
     valueId: 收藏对象ID，如果type=0则设置商品ID，如果type=1则设置专题ID
-    
+
 例如
-    
+
     {
       "type": 0,
       "valueId": 1116011
     }
 
-    
 响应内容
 
-    
 错误码
-    
+
     略
-        
+
+
 ### 2.11 评论服务
 
 #### 2.11.1 评论数量
@@ -2532,16 +2543,16 @@ swagger:
 应用场景
 
     某个商品或者专题的评论数量，包括总的评论数量和包含图片的评论数量
-    
+
 接口链接
 
     GET /wx/comment/count
 
 请求参数
-    
+
     type: 评论类型，如果是0则是商品评论，如果是1则是专题评论
     valueId: 评论对象ID，如果type=0,则设置商品ID，如果type=0,则设置专题ID
-    
+
 响应内容
 
     {
@@ -2554,22 +2565,21 @@ swagger:
     }
 
 错误码
-    
+
     无
-    
 
 #### 2.11.2 评论列表
 
 应用场景
 
     某个商品或者专题的评论列表
-    
+
 接口链接
 
     GET /wx/comment/list
-    
+
 请求参数
-    
+
     valueId=1181000&type=0&limit=20&page=1&showType=0
     type: 评论类型，如果是0则是商品评论，如果是1则是专题评论
     valueId: 评论对象ID，如果type=0,则设置商品ID，如果type=0,则设置专题ID
@@ -2578,7 +2588,8 @@ swagger:
     limit: 每一页数量
     sort: 排序字段
     order: 升序降序
-        
+
+
 响应内容
 
     {
@@ -2650,50 +2661,47 @@ swagger:
       },
       "errmsg": "成功"
     }
-    
+
 错误码
-    
+
     无
-        
+
 
 #### 2.11.3 发表评论
 
 应用场景
 
     针对某个商品或者专题的发表评论
-    
+
 接口链接
 
-
 请求参数
-    
 
 响应内容
 
-
 错误码
-    
-    略
-            
-### 2.12 优惠券服务
 
+    略
+
+
+### 2.12 优惠券服务
 
 #### 2.12.1 优惠券列表
 
 应用场景
 
     优惠券列表
-    
+
 接口链接
 
     GET  /wx/coupon/list
-    
+
 请求参数
-    
+
     page: 请求页码
     limit: 每一页数量
     sort: 排序字段
-    order: 升序降序       
+    order: 升序降序
 
 响应内容
 
@@ -2729,28 +2737,27 @@ swagger:
     }
 
 错误码
-    
+
     略
-    
 
 #### 2.12.2 用户优惠券列表
 
 应用场景
 
     用户优惠券列表
-    
+
 接口链接
 
     GET /wx/coupon/mylist
-    
+
 请求参数
-    
+
     status: 优惠券状态，如果0则未使用，如果1则已使用，如果2则已过期
     page: 请求页码
     limit: 每一页数量
     sort: 排序字段
-    order: 升序降序    
-    
+    order: 升序降序
+
 响应内容
 
     {
@@ -2785,27 +2792,26 @@ swagger:
       },
       "errmsg": "成功"
     }
-    
+
 错误码
-    
+
     略
-    
 
 #### 2.12.3 下单可用优惠券
 
 应用场景
 
     当前购物车下单商品订单可用优惠券
-    
+
 接口链接
 
     GET /wx/coupon/selectlist
 
 请求参数
-    
+
     cartId: 购物车ID，如果0则是购物车商品，如果非0则是立即单一商品
     grouponRulesId: 团购规则ID，如果是团购商品则需要设置具体团购规则ID
-    
+
 响应内容
 
     {
@@ -2830,11 +2836,12 @@ swagger:
       },
       "errmsg": "成功"
     }
-    
+
 错误码
-    
+
     略
-            
+
+
 #### 2.12.4 优惠券领取
 
 应用场景
@@ -2842,19 +2849,19 @@ swagger:
     领取优惠券
 
 接口链接
-    
+
     POST /wx/coupon/receive
 
 请求参数
-    
+
     couponId： 可领取优惠券ID
-    
+
 例如
 
     {
         "couponId": 2
     }
-    
+
 响应内容
 
     {
@@ -2863,7 +2870,7 @@ swagger:
     }
 
 错误码
-    
+
     略
 
 #### 2.12.5 优惠券兑换
@@ -2871,15 +2878,15 @@ swagger:
 应用场景
 
     通过兑换码兑换优惠券
-    
+
 接口链接
 
     POST /wx/coupon/exchange
 
 请求参数
-    
+
     code: 优惠券兑换码
-    
+
 响应内容
 
     {
@@ -2888,9 +2895,10 @@ swagger:
     }
 
 错误码
-    
+
     略
-                                    
+
+
 ### 2.13 反馈服务
 
 ### 2.14 足迹服务
@@ -2900,16 +2908,16 @@ swagger:
 应用场景
 
     用户足迹列表
-    
+
 接口链接
 
     GET /wx/footprint/list
-    
+
 请求参数
-    
+
     page: 请求页码
-    limit: 每一页数量 
-    
+    limit: 每一页数量
+
 响应内容
 
     {
@@ -2960,120 +2968,110 @@ swagger:
       },
       "errmsg": "成功"
     }
-        
+
+
 错误码
-    
+
     略
-    
+
 #### 2.14.2 用户足迹删除
 
 应用场景
 
     用户足迹删除
-    
+
 接口链接
 
     POST /wx/footprint/delete
-    
+
 请求参数
-    
+
     id: 用户足迹ID
-    
+
 响应内容
 
     {
       "errno": 0,
       "errmsg": "成功"
     }
-        
+
+
 错误码
-    
+
     略
-        
+
+
 ### 2.15 团购服务
 
 注意
-> 团购业务还不完善
 
+> 团购业务还不完善
 
 #### 2.15.1 团购商品列表
 
 应用场景
 
     参加团购的商品列表信息
-    
+
 接口链接
 
-
 请求参数
-    
 
 响应内容
 
-
 错误码
-    
-    略
 
+    略
 
 #### 2.15.2 团购活动详情
 
 应用场景
 
     团购活动详情
-    
+
 接口链接
 
-
 请求参数
-    
 
 响应内容
 
-
 错误码
-    
-    略               
+
+    略
 
 #### 2.15.3 参加团购
 
 应用场景
 
     参加团购的商品列表信息
-    
+
 接口链接
 
-
 请求参数
-    
 
 响应内容
 
-
 错误码
-    
-    略
 
+    略
 
 #### 2.15.4 用户参团列表
 
 应用场景
 
     用户参团列表
-    
+
 接口链接
 
-
 请求参数
-    
 
 响应内容
 
-
 错误码
-    
+
     略
-                                                                  
+
+
 ### 2.16 帮助服务
 
 #### 2.16.1 帮助列表
@@ -3081,17 +3079,17 @@ swagger:
 应用场景
 
     帮助列表
-    
+
 接口链接
 
     GET /wx/issue/list
-    
+
 请求参数
-    
+
     page: 请求页码
     limit: 每一页数量
     sort: 排序字段
-    order: 升序降序    
+    order: 升序降序
 
 响应内容
 
@@ -3139,11 +3137,12 @@ swagger:
       },
       "errmsg": "成功"
     }
-    
+
 错误码
-    
+
     无
-              
+
+
 ### 2.17 搜索服务
 
 ### 2.18 专题服务
@@ -3153,18 +3152,18 @@ swagger:
 应用场景
 
     访问专题列表信息
-    
+
 接口链接
 
     GET /wx/topic/list
 
 请求参数
-    
+
     page: 请求页码
     limit: 每一页数量
     sort: 排序字段
     order: 升序降序
-    
+
 响应内容
 
     {
@@ -3261,23 +3260,23 @@ swagger:
     }
 
 错误码
-    
+
     略
-    
+
 #### 2.18.2 专题详情
 
 应用场景
 
     单个专题详情信息
-    
+
 接口链接
 
     GET /wx/topic/detail
 
 请求参数
-    
+
     id: 专题ID，例如 id=264
-    
+
 响应内容
 
     {
@@ -3300,10 +3299,10 @@ swagger:
         "goods": []
       },
       "errmsg": "成功"
-    }  
+    }
 
 错误码
-    
+
     略
 
 #### 2.18.3 专题推荐
@@ -3311,15 +3310,15 @@ swagger:
 应用场景
 
     基于某个专题推荐其他专题
-    
+
 接口链接
 
     GET /wx/topic/related
 
 请求参数
-    
+
     id: 专题ID，例如 id=264
-    
+
 响应内容
 
     {
@@ -3390,13 +3389,12 @@ swagger:
       },
       "errmsg": "成功"
     }
-    
+
 ### 2.19 对象存储服务
 
 ### 2.20 其他服务
 
-
-## 3 管理后台API服务
+## 3 管理后台 API 服务
 
 略
 
