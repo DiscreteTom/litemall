@@ -32,6 +32,16 @@ module.exports = {
     proxy: {
       "/admin": {
         target: "http://localhost:8081",
+        logLevel: "debug",
+        pathRewrite: {
+          "^/proxy/3000/admin": "/admin",
+        },
+        // onProxyReq: (proxyReq, req, res) => {
+        //   console.log('Proxy request:', req.method, req.path);
+        // },
+        // onProxyRes: (proxyRes, req, res) => {
+        //   console.log('Proxy response:', proxyRes.statusCode, req.path);
+        // },
       },
     },
     port: port,
