@@ -284,7 +284,7 @@ Spring Boot 技术栈参考以下文档或者项目：
 - MySQL 数据访问地址`jdbc:mysql://localhost:3306/litemall`
 - litemall-wx-api 后端服务地址`http://localhost:8081/wx`，数据则来自 MySQL
 - litemall-admin-api 后端服务地址`http://localhost:8081/admin`,数据则来自 MySQL
-- litemall-admin 前端访问地址`http://localhost:9527`, 数据来自 litemall-admin-api
+- litemall-admin 前端访问地址`http://localhost:3000`, 数据来自 litemall-admin-api
 - litemall-wx 没有前端访问地址，而是直接在微信小程序工具上编译测试开发，最终会部署到微信官方平台（即不需要自己部署 web 服务器），而数据则来自 litemall-wx-api
 
 ### 1.4.1 数据库
@@ -404,17 +404,16 @@ flush privilege
 ### 1.4.4 Vue 开发环境
 
 1.  安装[nodejs](https://nodejs.org/en/) 2. 安装依赖库
-        ```
-        cd litemall/litemall-admin
-        npm install --registry=https://registry.npm.taobao.org
-        ```
+    `    cd litemall/litemall-admin
+    npm install --registry=https://registry.npm.taobao.org
+   `
 2.  编译并运行
 
     ```
     npm run dev
     ```
 
-    然后，打开浏览器，输入`http://localhost:9527`。
+    然后，打开浏览器，输入`http://localhost:3000`。
     如果出现管理后台登录页面，则表明管理后台的前端运行正常；
 
 3.  请确定 litemall-all 模块已经运行，然后点击`登录`，如果能够成功登录，则表明管理后台的前端和后端对接成功，运行正常。
