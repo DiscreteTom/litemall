@@ -1,6 +1,9 @@
 -- 模拟订单数据
 -- 首先确保订单表和订单商品表存在一些测试数据
 
+-- 设置正确的字符集
+SET NAMES utf8mb4;
+
 -- 清理已有的测试数据
 DELETE FROM litemall_order_goods WHERE order_id IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
 DELETE FROM litemall_order WHERE id IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
